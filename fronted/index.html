@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dockerized APIs</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+      }
+      .panel {
+        flex: 1;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 1rem;
+      }
+      h2 {
+        margin-top: 0;
+      }
+      pre {
+        white-space: pre-wrap;
+        background: #f5f5f5;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const usersPanel = document.getElementById("users");
+        const quotePanel = document.getElementById("quote");
+
+        usersPanel.textContent = "Loading...";
+        quotePanel.textContent = "Loading...";
+
+        const USERS_API_URL = "http://localhost:5001/users";
+        const QUOTE_API_URL = "http://localhost:5002/quote";
+
+        fetch(USERS_API_URL)
+          .then((response) => response.json())
+          .then(
+            (data) => (usersPanel.textContent = JSON.stringify(data, null, 2)),
+          )
+          .catch(
+            (error) =>
+              (usersPanel.textContent = "Error fetching users: " + error),
+          );
+
+        fetch(QUOTE_API_URL)
+          .then((response) => response.json())
+          .then(
+            (data) =>
+              (document.getElementById("quote").textContent = JSON.stringify(
+                data,
+                null,
+                2,
+              )),
+          )
+          .catch(
+            (error) =>
+              (document.getElementById("quote").textContent =
+                "Error fetching quote: " + error),
+          );
+      });
+    </script>
+  </head>
+  <body>
+    <div class="panel">
+      <h2>Users</h2>
+      <pre id="users">Loading...</pre>
+    </div>
+    <div class="panel">
+      <h2>Quote</h2>
+      <pre id="quote">Loading...</pre>
+    </div>
+  </body>
+</html>

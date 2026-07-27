@@ -1,0 +1,22 @@
+# Dockerized APIs — The Journey
+
+## The Good
+- Instead of starting from scratch, I reused the '/users' CSV-to-JSON logic I already had working in HTTP Server 2. Same idea, just had to port it over from raw sockets to Flask.
+- The assignment basically told me not to just reuse '/time' since it wanted "something more interesting," so I went with '/quote' instead — different data, and it's random each time so it actually feels like its own thing instead of a copy-paste.
+- Nobody in my cohort had finished their endpoint yet, so I couldn't do the "pull a classmate's image" step for real. Instead of waiting around, I just ran two containers off my own image on two different ports and pointed the frontend at a different route on each one. Still proves I can call two independent running services, just both happen to be mine.
+- I set up CORS once at the app level with '@app.after_request' instead of copy-pasting the header into every route — figured that'd save me from forgetting it on a route I add later.
+- Gave my containers actual names ('api_user', 'api_quote') instead of letting Docker auto-generate something random, so 'docker logs' and 'docker stop' actually make sense when I run them.
+- Tested it at the end and both panels loaded real JSON, no errors, no CORS issues, nothing stuck on "Loading...".
+
+## The Bad
+- I pasted the wrong file at one point — grabbed the raw-socket 'Request' parser from HTTP Server 2 instead of my actual Flask 'server.py'. Two projects, similarly named files, easy mix-up.
+- Copying 'users.csv' over took me two tries to get the path right, since it depended on which folder I was actually sitting in when I ran the command.
+- My first pass at the frontend put the '<script>' tag in '<head>' and tried to grab DOM elements by ID before they even existed yet. It "worked" but only because the fetch was slower than the page parsing — not because I'd actually built it right.
+
+## The Ugly
+- That '<script>'-in-'<head>' thing is the kind of bug that works every time on my machine until the one time it doesn't — a slow device, or a fetch that resolves instantly from cache, and I'd have gotten a silent null error with nothing showing on the page. Glad I caught it before it bit me later.
+- Standing in for a classmate's endpoint with a second copy of my own image gets the job done, but it means I didn't really get to feel the pain points the assignment was actually going for — different codebases, possible arch mismatches (arm64 vs amd64), etc. 
+
+## Wrap-up
+- Pushed the image to Docker Hub and made the repo private.
+- Went private on purpose, but that means my classmates can't actually 'docker pull' it unless I add them as collaborators — need to remember that if I need to change it back to public later. 
